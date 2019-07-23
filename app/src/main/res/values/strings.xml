@@ -5,5 +5,9 @@
     <string name="get_from_location">Get From Location</string>
     <string name="get_from_location_name_1">Location Name 1</string>
     <string name="get_from_location_name">Location Name</string>
-    <string name="get_current_location">Current Location</string>
+    <string name="location_option_1">Location option 1</string>
+    <string name="location_option_2">Location option 2</string>
+    <string name="label_latitude">Latitude</string>
+    <string name="label_longitude">Longitude</string>
+    <string name="label_address">Address</string>
 </resources>

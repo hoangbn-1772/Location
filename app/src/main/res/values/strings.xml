@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">LocationSample</string>
+    <string name="geocoder_demo">Geocoder Demo</string>
+    <string name="location_demo">Location Demo</string>
+    <string name="get_from_location">Get From Location</string>
+    <string name="get_from_location_name_1">Location Name 1</string>
+    <string name="get_from_location_name">Location Name</string>
+    <string name="get_current_location">Current Location</string>
+</resources>

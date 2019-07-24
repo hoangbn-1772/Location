@@ -59,22 +59,58 @@ s
 - Có 3 loại location providers trong Android:
 	+ gps(GPS, AGPS): Nhà cung cấp này xác định vị trí bằng cách sử dụng các vệ tinh. Tùy vào điều kiện, nhà cung cấp này có thể mất một lúc để trả về vị trí. Yêu cầu quyền ERIC.ACCESS_FINE_LOCATION.
 	+ network (AGPS, CellID, Wifi MACID): Nhà cung cấp này xác định vị trí dựa trên tính khả dụng của các điểm truy cập Wifi và tháp di động. Kết quả được lấy bằng phương pháp tra cứu mạng. Yêu cầu một trong hai quyền ERIC.ACCESS_COARSE_LOCATION hoặc ERIC.ACCESS_FINE_LOCATION.
-	+ passive (CellID, Wifi MACID): Location provider đặc biệt để nhận vị trí mà không thực sự bắt đầu sửa lỗi vị trí. Nhà cung cấp này có thể được sử dụng để nhận thụ động cập nhật vị trí khi các ứng dụng hoặc dịch vụ khác yêu cầu chúng mà không thực sự yêu cầu vị trí đó. Nhà cung cấp này sẽ trả lại các vị trí được tạo bởi các nhà cung cấp khác. Yêu cầu quyền ACCESS_FINE_LOCATION, mặc dù nếu GPS không được bật, provider này chỉ có thể trả về các bản sửa lỗi thô.
+	+ passive (CellID, Wifi MACID): Không tự động cập nhật vị trí thay vào đó nó sử dụng kết quả được tạo bởi nhà cung cấp khác khi các ứng dụng khác yêu cầu. Yêu cầu quyền ACCESS_FINE_LOCATION, mặc dù nếu GPS không được bật, provider này chỉ có thể trả về các bản sửa lỗi thô.
 
 	<img src="images/location_provider.png"/>
 
-- Để lựa chọn LocationProvider tùy theo bài toán sử dụng class *Criteria*, Lớp này chỉ ra các tiêu chí để chọn một LocationProvider như độ chính xác, sử dụng năng lượng, độ cao, tốc độ,...
+- Để lựa chọn LocationProvider tùy theo bài toán, sử dụng class *Criteria* - Lớp này chỉ ra các tiêu chí để chọn một LocationProvider như độ chính xác, sử dụng năng lượng, độ cao, tốc độ,...
+- Ví dụ:
 
-- Tham khảo: https://developer.android.com/reference/android/location/LocationProvider
+<img src="images/select_provider_cri.png"/>
+
+	+ Criteria.ACCURACY_FINE: Yêu cầu độ chính xác cao (ACCURACY_COARSE, ACCURACY_FINE, ACCURACY_LOW, ACCURACY_MEDIUM, NO_REQUIREMENT)
+	+ isAltitudeRequired = false: Nhà cung cấp trả về/không thông tin về độ cao.
+	+ isBearingRequired = false: Nhà cung cấp trả về/không thông tin về bearing.
+	+ isCostAllowed = true: Nhà cung cấp có được phép chịu chi phí tiền tệ hay không.
+	+ powerRequirement = Criteria.POWER_HIGH: Yêu cầu năng lượng cao (POWER_LOW, POWER_MEDIUM)
+
+- Cách tốt nhất để xử lý GPS là trước tiên sử dụng "network" or "passive" và sau đó là "gps". Tùy thuộc vào nhu cầu để chuyển đổi giữa các nhà cung cấp này bất cứ lúc nào.
+
+- Tham khảo:
+	+ https://developer.android.com/reference/android/location/LocationProvider
+	+ https://developer.android.com/reference/android/location/Criteria#ACCURACY_COARSE
 
 ### Thực hành
 - Lấy vị trí hiện tại của người dùng.
-- Những bước cần làm:
-	+ Kiểm tra tất cả providers đã bật chưa. Một số có thể bị tắt bởi device hoặc application manifest.
-	+ Nếu có provider available, bắt đầu lắng nghe location và timeout timer. Ví dụ là 20s.
-	+ Nếu nhận được location cập nhật từ trình lắng nghe, sử dụng giá trị được cung cấp, dừng lắng nghe và timer.
-	+ Nếu không nhận được bất cứ location cập nhật nào và timer trôi qua, sẽ sử dụng lại giá trị location trước đó.
 
+## Google Play Service Location APIs
+- Cung cấp vị trí cho người dùng trong ứng dụng Android là rất phổ biến. Theo mặc định, Android SDK có cung cấp Location API, tuy nhiên API này không thực sự tối ưu hóa để tiết kiệm pin cho device. Vì vậy, Google đã tạo ra Fused Location Provider API tích hợp trong Google Play Services.
+- Fused Location Provider quản lý các công nghệ vị trí cơ bản như GPS và Wifi  kết hợp thông minh các tín hiệu khác nhau để cung cấp thông tin vị trí theo nhu cầu của bạn.
+- Để hiểu thêm về Fused Location Provider API, bạn hãy tham khảo tại đây: https://developers.google.com/location-context/fused-location-provider/?source=post_page---------------------------
+
+### Ưu điểm
+- Location API đã có sẵn khi các version Android OS đầu tiên xuất hiện, các lệnh đơn giản và thuật toán theo dõi vị trí đơn giản. Nhưng có 2 vấn đề lớn với cách tiếp cận này:
+	+ Trong trường hợp bạn cần xác định vị trí chính xác, bạn phải chuyển đổi giữa các nhà cung cấp vị trí mạng và GPS (GPS không hoạt động trong nhà).
+	+ Cảnh báo đã được sử dụng để thông báo tới người dùng về khoảng cách gần địa điểm và điều này gây tốn pin.
+- Fused Location Provider phân tích dữ liệu GPS, mạng di động và Wifi để cung cấp dữ liệu chính xác cao nhất. Ngoài ra nó còn sử dụng các cảm biến khác nhau để xác định xem người dùng đang đi bộ, lái xe,...
+- Fused Location Provider có thể sử dụng để nhận các bản cập nhật vị trí theo định kỳ. Nó có thể báo cho người dùng đang vào/ra khỏi một khu vực (tính năng geofenced: https://developer.android.com/training/location/geofencing.html)
+- 
+### Last Known Location
+- Sử dụng Fused Location Provider, có thể yêu cầu vị trí đã biết cuối cùng của thiết bị người dùng. Trong hầu hết các trường hợp, bạn muốn lấy vị trí hiện tại của người dùng, thường tương đương với vị trí được biết đến cuối cùng của thiết bị.
+- Từ Android 8.0 (API 26) trở lên, nếu ứng dụng đang chạy ở background khi yêu cầu vị trí hiện tại, thì thiết bị chỉ tính toán vị trí một vài lần mỗi giờ.
+
+### Location Settings
+- Khi app cần request location hoặc nhận permission update, thiết bị cần bật các cài đặt hệ thống phù hợp chẳng hạn như quét GPS hoặc Wifi. Thay vì trực tiếp kích hoạt các dịch vụ như GPS, ứng dụng của bạn chỉ cần chỉ định mức độ chính xác, mức tiêu thụ năng lượng cần thiết và khoảng thời gian cập nhật mong muốn, thiết bị sẽ tự động thực hiện các thay đổi phù hợp với cài đặt hệ thống. Các cài đặt này được xác định bởi đối tượng LocationRequest.
+- Sử dụng đối tượng LocationRequest để lưu trữ các parameters cho các request. Các params này xác định độ chính xác cho các location request.
+	+ setInterval(): Method này để thiết lập thời gian tính bằng miliseconds mà ứng dụng muốn cập nhật vị trí. Thời gian cập nhật vị trí có thể nhanh hoặc chậm hơn thời gian này hoặc có thể không có bản cập nhật nào cả.
+	+ setFastestInterval(): Method này thiết lập thời gian nhanh nhất tính bằng miliseconds mà ứng dụng có thể xử lý các cập nhật vị trí. Cần cài đặt thời gian này vì các ứng dụng khác cũng ảnh hưởng đến tốc độ gửi cập nhật. Google Play services location APIs gửi các bản cập nhật với tốc độ nhanh nhất mà bất kỳ ứng dụng nào đã yêu cầu với setInterval(). Nếu tốc độ này nhanh hơn tốc độ ứng dụng có thể xử lý, bạn có thể gặp phải sự cố giao diện người dùng. Để ngăn chặn điều này, sử dụng setFastestInterval() để đặt giới hạn trên cho tốc độ cập nhật.
+	+ setPriority(): Method để thiết lập mức độ ưu tiên của request: PRIORITY_BALANCED_POWER_ACCURACY, PRIORITY_HIGH_ACCURACY, PRIORITY_LOW_POWER, PRIORITY_NO_POWER
+
+- Khi bạn đã kết nối với Google Play Service và Location Services API, bạn có thể nhận current location setting của user device. Để làm điều đó, tạo LocationSettingsRequest.Builder.
+- Để xác định xem các location setting có phù hợp với location request hay không, thêm OnFailureListener vào Task để xác thực location setting. Sau đó, kiểm tra xem đối tượng Exception có phải là instance của ResolvableApiException không. Sau đó, hiển thị hộp thoại nhắc người dùng cho phép sửa đổi location setting bằng cách gọi startResolutionForResult().
+
+### Location Updates
+- Nếu ứng dụng của bạn liên tục theo dõi vị trí, nó có thể cung cấp thông tin phù hợp hơn tới người dùng. Ngoài cách nhận vị trí cuối của thiết bị, một cách tiếp cận trực tiếp hơn là yêu cầu cập nhật định kỳ từ Fused Location Provider dựa trên Wifi và GPS.
 
 ## Tài liệu tham khảo
 - Geocoding: https://developer.android.com/reference/android/location/Geocoder
@@ -84,4 +120,8 @@ s
 	+ https://developerlife.com/2010/10/20/gps/
 	+ https://stackoverflow.com/questions/3145089/what-is-the-simplest-and-most-robust-way-to-get-the-users-current-location-on-a/3145655#3145655
 	+ https://medium.com/@maheshikapiumi/android-location-services-7894cea13878
+- Fused Location Provider API: 
+	+ https://developer.android.com/training/location/change-location-settings
+	+ https://developer.android.com/training/location/receive-location-updates
+	+ https://lembergsolutions.com/blog/fused-location-provider
 

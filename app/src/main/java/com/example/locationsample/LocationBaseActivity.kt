@@ -1,28 +1,14 @@
 package com.example.locationsample
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Criteria
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.os.Build
+import android.content.Intent
+import android.location.*
 import android.os.Bundle
-import android.util.Log
+import android.provider.Settings
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_location_base.btn_get_location_1
-import kotlinx.android.synthetic.main.activity_location_base.btn_get_location_2
-import kotlinx.android.synthetic.main.activity_location_base.text_address
-import kotlinx.android.synthetic.main.activity_location_base.text_address_2
-import kotlinx.android.synthetic.main.activity_location_base.text_latitude
-import kotlinx.android.synthetic.main.activity_location_base.text_latitude_2
-import kotlinx.android.synthetic.main.activity_location_base.text_longitude
-import kotlinx.android.synthetic.main.activity_location_base.text_longitude_2
+import kotlinx.android.synthetic.main.activity_location_base.*
 
 class LocationBaseActivity : AppCompatActivity(), View.OnClickListener, UserLocation.LocationResult {
 
@@ -34,7 +20,6 @@ class LocationBaseActivity : AppCompatActivity(), View.OnClickListener, UserLoca
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_location_base)
         initComponents()
-        checkPermission()
     }
 
     override fun onClick(v: View?) {
@@ -48,40 +33,12 @@ class LocationBaseActivity : AppCompatActivity(), View.OnClickListener, UserLoca
         location?.let { setupViewOption1(it) }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                getCurrentLocation()
-                return
-            }
-        }
-    }
-
     private fun initComponents() {
         btn_get_location_1.setOnClickListener(this)
         btn_get_location_2.setOnClickListener(this)
     }
 
-    private fun checkPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (
-                (ContextCompat.checkSelfPermission(this, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED)
-            ) {
-                requestPermissions(PERMISSIONS, REQUEST_CODE)
-                return
-            } else {
-//                getCurrentLocation()
-            }
-        }
-    }
-
-    /**
-     * option 1
-     */
+    // option 1
     private fun getCurrentLocation() {
         val status = userLocation.getLocation(this, this)
     }
@@ -91,25 +48,24 @@ class LocationBaseActivity : AppCompatActivity(), View.OnClickListener, UserLoca
         text_latitude.text = location.latitude.toString()
         text_longitude.text = location.longitude.toString()
         text_address.text = addresses[0].getAddressLine(0)
-        Log.d("TAG", location.provider)
+        text_location_provider.text = location.provider
     }
 
-    /**
-     * option 2:
-     */
+    // option 2
     @SuppressLint("MissingPermission")
     private fun requestLocation() {
+
+        /*this criteria will settle for high accuracy, high power, and cost*/
         val criteria = Criteria().apply {
             accuracy = Criteria.ACCURACY_COARSE
             isAltitudeRequired = false
             isBearingRequired = false
             isCostAllowed = true
-            powerRequirement = Criteria.POWER_LOW
+            powerRequirement = Criteria.POWER_HIGH
         }
 
         val provider = mLocationManager.getBestProvider(criteria, true)
-        Log.d("TAG", "Best Provider $provider")
-        mLocationManager.requestLocationUpdates(provider, 20000, 0F, mLocationListener)
+        mLocationManager.requestLocationUpdates(provider, MIN_TIME, MIN_DISTANCE, mLocationListener)
     }
 
     private fun setupViewOption2(location: Location) {
@@ -117,7 +73,7 @@ class LocationBaseActivity : AppCompatActivity(), View.OnClickListener, UserLoca
         text_latitude_2.text = location.latitude.toString()
         text_longitude_2.text = location.longitude.toString()
         text_address_2.text = addrs[0].getAddressLine(0)
-        Log.d("TAG", location.provider)
+        text_provider_2.text = location.provider
     }
 
     private val mLocationListener = object : LocationListener {
@@ -129,15 +85,19 @@ class LocationBaseActivity : AppCompatActivity(), View.OnClickListener, UserLoca
         }
 
         override fun onProviderEnabled(provider: String?) {
+            // try switching to a different provider.
         }
 
         override fun onProviderDisabled(provider: String?) {
+            // try switching to a different provider.
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
         }
     }
 
     companion object {
-        private const val REQUEST_CODE = 101
-        private val PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
         private const val MAX_RESULT = 1
+        private const val MIN_TIME = 20000L
+        private const val MIN_DISTANCE = 0F
     }
 }

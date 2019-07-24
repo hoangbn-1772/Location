@@ -2,6 +2,7 @@
     <string name="app_name">LocationSample</string>
     <string name="geocoder_demo">Geocoder Demo</string>
     <string name="location_demo">Location Demo</string>
+    <string name="google_service_api">Fused Location Provider API</string>
     <string name="get_from_location">Get From Location</string>
     <string name="get_from_location_name_1">Location Name 1</string>
     <string name="get_from_location_name">Location Name</string>
@@ -10,4 +11,5 @@
     <string name="label_latitude">Latitude</string>
     <string name="label_longitude">Longitude</string>
     <string name="label_address">Address</string>
+    <string name="get_location_fused">Get Location</string>
 </resources>

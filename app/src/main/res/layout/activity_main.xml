@@ -20,4 +20,11 @@
         android:layout_below="@id/btn_geocoder_demo"
         android:text="@string/location_demo"/>
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_google_service_demo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_location_base"
+        android:text="@string/google_service_api"/>
+
 </RelativeLayout>

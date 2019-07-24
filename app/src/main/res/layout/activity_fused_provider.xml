@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dp_8"
+    tools:context=".FusedProviderActivity">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_latitude_fused"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_longitude_fused"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_latitude_fused"
+        android:layout_marginTop="@dimen/dp_8"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_address_fused"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_longitude_fused"
+        android:layout_marginTop="@dimen/dp_8"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_provider_fused"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_address_fused"
+        android:layout_marginTop="@dimen/dp_8"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_get_location_fused"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/get_location_fused"/>
+
+</RelativeLayout>

@@ -57,6 +57,8 @@ class FusedProviderActivity : AppCompatActivity(), View.OnClickListener {
         interval = 10000
         fastestInterval = 5000
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        setExpirationDuration(20000)
+        maxWaitTime = 30000
     }
 
     private fun getLocationSettings() {
@@ -65,6 +67,9 @@ class FusedProviderActivity : AppCompatActivity(), View.OnClickListener {
 
         val client: SettingsClient = LocationServices.getSettingsClient(this)
         val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+
+        Log.d("TAG", "Location settings status code: $task")
+
         task.addOnSuccessListener {
 
         }

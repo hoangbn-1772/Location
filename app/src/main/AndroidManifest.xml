@@ -15,6 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <service
+            android:name=".LocationService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
         <activity android:name=".FusedProviderActivity">
         </activity>
         <activity android:name=".LocationBaseActivity">

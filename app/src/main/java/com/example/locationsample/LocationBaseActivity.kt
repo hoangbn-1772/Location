@@ -57,11 +57,11 @@ class LocationBaseActivity : AppCompatActivity(), View.OnClickListener, UserLoca
 
         /*this criteria will settle for high accuracy, high power, and cost*/
         val criteria = Criteria().apply {
-            accuracy = Criteria.ACCURACY_COARSE
+            accuracy = Criteria.ACCURACY_FINE
             isAltitudeRequired = false
             isBearingRequired = false
             isCostAllowed = true
-            powerRequirement = Criteria.POWER_HIGH
+            powerRequirement = Criteria.POWER_MEDIUM
         }
 
         val provider = mLocationManager.getBestProvider(criteria, true)

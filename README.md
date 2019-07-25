@@ -217,7 +217,9 @@
 - Trong ví dụ trên, vị trí được tính khoảng 10p một lần và khoảng 6 điểm dữ liệu location được phân phối theo khoảng mỗi giờ. Mặc dù bạn vẫn nhận được cập nhật vị trí cứ sau mười phút hoặc có thể lâu hơn nhưng thiết bị vẫn tiết kiệm pin vì nó chỉ thức dậy mỗi giờ hoặc lâu hơn.
 
 #### Use passive location updates
-- Trong trường hợp sử dụng background, đây là một cách tốt để cải thiện cập nhật vị trí. Từ Android 8.0 đã thực hiện điều này (background location limit), đối với các thiết bị cũ hơn nên cố gắng để làm điều đó càng tốt.
+- Trong trường hợp sử dụng background, đây là một cách tốt để cải thiện cập nhật vị trí. 
+- Từ Android 8.0 trở lên (background location limit), không thực hiện cập nhật location
+- Đối với các thiết bị cũ hơn vẫn cập nhật location -> Gây tốn pin
 
 ## Tài liệu tham khảo
 - Geocoding: https://developer.android.com/reference/android/location/Geocoder

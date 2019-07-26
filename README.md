@@ -167,11 +167,25 @@
 ## Tối ưu hóa Pin trong bài toàn Location.
 
 ### Background Location Limits
-- Được giới thiệu trong Android 8.0, đề cập đến việc tối ưu hóa Pin cho bài toán Location
+- Trong nỗ lực giảm mức tiêu thụ năng lượng, từ Android 8.0 đã giới hạn tần xuất khi app ở background có thể lấy user current location. App có thể nhận được cập nhật vị trí chỉ một vài lần mỗi giờ.
+- Background Location Limits trong Android 8.0, giới thiệu các thay đổi sau:
 	+ Background Location cập nhật location một vài lần trong 1 giờ
 	+ Việc quét sẽ Wifi thận trọng hơn. Location sẽ không được cập nhật khi thiết bị vẫn đang kết nối tới cùng một địa chỉ wifi.
 	+ Sử dụng Geofencing response thay đổi từ 10s đến 2 phút. Sự thay đổi này đáng chú ý giúp cải thiện hiệu suất pin, tốt hơn tới 10 lần trên một số thiết bị.
-
+- Xem xét các trường hợp sử dụng khi app ở Background, vì vị trí được cập nhật không thường xuyên. Bạn có thể cập nhật vị trí thường xuyên hơn bằng cách thực hiện một trong các hành động sau:
+	+ Đưa app về foreground
+	+ Start một foreground service bằng cách gọi startForegroundService(), kết hợp sử dụng một notification.
+	+ Sử dụng các thành phần của Geofencing API như là GeofencingApi, được tối ưu hóa pin.
+	+ Sử dụng lắng nghe vị trí thụ động, có thể nhận được vị trí nhanh hơn nếu có các ứng dụng nền tảng yêu cầu cập nhật vị trí với tốc độ nhanh hơn.
+	
+- Việc yêu cầu vị trí khi app ở background có ảnh hưởng tới các API:
+- Đối với Fused Location Provider:
+	+ Nếu app chạy ở background, dịch vụ hệ thống vị trí sẽ tính toán một vị trí mới cho app của bạn chỉ một vài lần mỗi giờ. Ngay cả khi ứng dụng của bạn yêu cầu cập nhật vị trí thường xuyên hơn. Tuy nhiên bằng cách sử dụng *batched version* của FLP, bạn có quyền truy cập vào lịch sử vị trí thường xuyên hơn sau khi ứng dụng của bạn nhận được cập nhật hàng loạt, điều này cũng chỉ xảy ra vài lần một giờ.
+	+ Nếu ứng dụng của bạn đang chạy ở foreground, không có thay đổi về việc lấy vị trí.
+- Đối với Geofencing:
+	+ Khi app ở background có thể nhận được các sự kiện chuyển tiếp địa lý thường xuyên hơn các cập nhật từ FLP.
+	+ Khả năng đáp ứng trung bình cho một sự kiện định vị địa lý cứ sau vài phút hoặc lâu hơn.
+- Đối với Location Manager: Cập nhật vị trí được cung cấp cho app khi ở background chỉ một vài lần một giờ.
 ### Understand battery drain
 - Vấn đề tiêu hao pin có liên quan trực tiếp trong các trường hợp sau:
 	+ Accuracy (Độ chính xác): Độ chính xác của vị trí càng cao thì độ hao pin càng lớn
